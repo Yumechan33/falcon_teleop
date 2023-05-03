@@ -12,12 +12,12 @@ class MinimalPublisher(Node):
 
     def __init__(self):
         super().__init__('lidar_detect')
-        self.subscription = self.create_subscription(
-            LaserScan,
-            'scan',
-            self.listener_callback,
-            10)
-        self.subscription
+        # self.subscription = self.create_subscription(
+        #     LaserScan,
+        #     'scan',
+        #     self.listener_callback,
+        #     10)
+        # self.subscription
         self.publisher = self.create_publisher(Twist, 'cmd_vel',10)
         # self.pub_force = self.create_publisher(FalconForces, 'sendForces',10)
         self.sub_falcon = self.create_subscription(
@@ -48,34 +48,11 @@ class MinimalPublisher(Node):
                 cmd_vel.linear.x = self.k*(self.pos[2] - self.init_pos)* self.gain
                 if cmd_vel.linear.x >= 0.22:
                       cmd_vel.linear.x = 0.22
+
+                cmd_vel.angular.z = 0.0
         # elif self.pos[1] <= -0.03:
         #         cmd_vel.linear.x = -0.5
         #         cmd_vel.angular.z = 0.0
-        elif self.pos[0] <= -0.03:
-                cmd_vel.linear.x = 0.0
-                cmd_vel.angular.z = 0.5
-        elif self.pos[0] >= 0.03:
-                cmd_vel.linear.x = 0.0
-                cmd_vel.angular.z = -0.5
-        else:
-            cmd_vel.linear.x = 0.0
-            cmd_vel.angular.z = 0.0
-        self.velocity = cmd_vel.linear.x
-        self.angular = cmd_vel.angular.z
-        self.publisher.publish(cmd_vel)
-
-    def listener_callback(self):
-
-        # Stop the robot if obstacle is too close
-        cmd_vel = Twist()
-        force = FalconForces()
-
-        if self.pos[2] >= 0.08:
-                cmd_vel.linear.x = 0.5
-                cmd_vel.angular.z = 0.0
-        elif self.pos[2] <= -0.03:
-                cmd_vel.linear.x = -0.5
-                cmd_vel.angular.z = 0.0
         elif self.pos[0] <= -0.03:
                 cmd_vel.linear.x = 0.0
                 cmd_vel.angular.z = 0.5
