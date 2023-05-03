@@ -27,7 +27,7 @@ class MinimalPublisher(Node):
             10)
         
         self.pos = [0,0,0]
-        self.min_distance= 0.05
+        self.min_distance= 0.01
         self.m_stiffness = 1000
         self.velocity = 0
         self.angular = 0
@@ -63,13 +63,12 @@ class MinimalPublisher(Node):
         self.publisher.publish(cmd_vel)
 
     def listener_callback(self, msg:LaserScan):
-         for distance in msg.ranges:
-            if distance < self.min_distance:
-                self.is_obstacle_close = True
-                break
-            else:
-                self.is_obstacle_close = False
-                self.get_logger().info('Close to the wall')
+        distance = min(msg.ranges)
+        if distance < self.min_distance:
+            self.is_obstacle_close = True
+            self.get_logger().info('Close to the wall')
+        else:
+            self.is_obstacle_close = False
 
 def main(args=None):
     rclpy.init(args=args)
