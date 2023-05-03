@@ -12,12 +12,12 @@ class MinimalPublisher(Node):
 
     def __init__(self):
         super().__init__('lidar_detect')
-        # self.subscription = self.create_subscription(
-        #     LaserScan,
-        #     'scan',
-        #     self.listener_callback,
-        #     10)
-        # self.subscription
+        self.subscription = self.create_subscription(
+            LaserScan,
+            'scan',
+            self.listener_callback,
+            10)
+        self.subscription
         self.publisher = self.create_publisher(Twist, 'cmd_vel',10)
         # self.pub_force = self.create_publisher(FalconForces, 'sendForces',10)
         self.sub_falcon = self.create_subscription(
@@ -27,7 +27,7 @@ class MinimalPublisher(Node):
             10)
         
         self.pos = [0,0,0]
-        self.min_distance= 0.5
+        self.min_distance= 0.05
         self.m_stiffness = 1000
         self.velocity = 0
         self.angular = 0
@@ -51,9 +51,9 @@ class MinimalPublisher(Node):
         # elif self.pos[1] <= -0.03:
         #         cmd_vel.linear.x = -0.5
         #         cmd_vel.angular.z = 0.0
-        elif self.pos[0] <= -0.03:
+        elif self.pos[0] <= -0.01:
                 self.angular = 0.5
-        elif self.pos[0] >= 0.03:
+        elif self.pos[0] >= 0.01:
                 self.angular= -0.5
         else:
             self.velocity  = 0.0
@@ -61,8 +61,15 @@ class MinimalPublisher(Node):
         cmd_vel.linear.x = self.velocity
         cmd_vel.angular.z = self.angular
         self.publisher.publish(cmd_vel)
-        
 
+    def listener_callback(self, msg:LaserScan):
+         for distance in msg.ranges:
+            if distance < self.min_distance:
+                self.is_obstacle_close = True
+                break
+            else:
+                self.is_obstacle_close = False
+                self.get_logger().info('Close to the wall')
 
 def main(args=None):
     rclpy.init(args=args)
