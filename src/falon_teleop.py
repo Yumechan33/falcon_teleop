@@ -25,7 +25,7 @@ class MinimalPublisher(Node):
             'readFalcon',
             self.control_callback,
             10)
-        self.goal_tetra = 0.0
+        
         self.pos = [0,0,0]
         self.min_distance= 0.5
         self.m_stiffness = 1000
@@ -45,25 +45,21 @@ class MinimalPublisher(Node):
         force = FalconForces()
 
         if self.pos[2] >= 0.08:
-                cmd_vel.linear.x = self.k*(self.pos[2] - self.init_pos)* self.gain
-                if cmd_vel.linear.x >= 0.22:
-                      cmd_vel.linear.x = 0.22
-
-                cmd_vel.angular.z = 0.0
+                self.velocity  = self.k*(self.pos[2] - self.init_pos)* self.gain
+                if self.velocity  >= 0.22:
+                      self.velocity  = 0.22
         # elif self.pos[1] <= -0.03:
         #         cmd_vel.linear.x = -0.5
         #         cmd_vel.angular.z = 0.0
         elif self.pos[0] <= -0.03:
-                cmd_vel.linear.x = 0.0
-                cmd_vel.angular.z = 0.5
+                self.angular = 0.5
         elif self.pos[0] >= 0.03:
-                cmd_vel.linear.x = 0.0
-                cmd_vel.angular.z = -0.5
+                self.angular= -0.5
         else:
-            cmd_vel.linear.x = 0.0
-            cmd_vel.angular.z = 0.0
-        self.velocity = cmd_vel.linear.x
-        self.angular = cmd_vel.angular.z
+            self.velocity  = 0.0
+            self.angular = 0.0
+        cmd_vel.linear.x = self.velocity
+        cmd_vel.angular.z = self.angular
         self.publisher.publish(cmd_vel)
         
 
