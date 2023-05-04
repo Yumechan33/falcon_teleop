@@ -64,13 +64,13 @@ class MinimalPublisher(Node):
 
     def listener_callback(self, msg:LaserScan):
         distance = min(msg.ranges)
-        self.get_logger().info('distance:%s'% distance)
+        self.get_logger().info("distance:%s"% distance)
         if distance < self.min_distance:
             self.is_obstacle_close = True
-            self.get_logger().info('Close to the wall')
+            self.get_logger().info("Close to the wall")
         else:
             self.is_obstacle_close = False
-            self.get_logger().info('Not Close Obstacle, Let move')
+            self.get_logger().info("Not Close Obstacle, Let move")
 
 def main(args=None):
     rclpy.init(args=args)
