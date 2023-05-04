@@ -31,8 +31,8 @@ class MinimalPublisher(Node):
         self.m_stiffness = 1000
         self.velocity = 0
         self.angular = 0
-        self.k = 0.5
-        self.gain = 4
+        self.kv = 2
+        self.ka = 9.09
         self.init_pos = 0.07
         self.force = [0.0,0.0,0.0]
         self.is_obstacle_close = False
@@ -45,16 +45,16 @@ class MinimalPublisher(Node):
         force = FalconForces()
 
         if self.pos[2] >= 0.08:
-                self.velocity  = self.k*(self.pos[2] - self.init_pos)* self.gain
+                self.velocity  = self.kv*(self.pos[2] - self.init_pos)
                 if self.velocity  >= 0.22:
                       self.velocity  = 0.22
         # elif self.pos[1] <= -0.03:
         #         cmd_vel.linear.x = -0.5
         #         cmd_vel.angular.z = 0.0
-        elif self.pos[0] <= -0.01:
-                self.angular = 0.5
+        elif self.pos[0] <= -0.01 :
+                self.angular = self.ka*(self.pos[0] - self.init_pos)
         elif self.pos[0] >= 0.01:
-                self.angular= -0.5
+                self.angular = self.ka*(self.pos[0] - self.init_pos)
         else:
             self.velocity  = 0.0
             self.angular = 0.0
@@ -64,11 +64,13 @@ class MinimalPublisher(Node):
 
     def listener_callback(self, msg:LaserScan):
         distance = min(msg.ranges)
+        self.get_logger().info('distance:%s'% distance)
         if distance < self.min_distance:
             self.is_obstacle_close = True
             self.get_logger().info('Close to the wall')
         else:
             self.is_obstacle_close = False
+            self.get_logger().info('Not Close Obstacle, Let move')
 
 def main(args=None):
     rclpy.init(args=args)
