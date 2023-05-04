@@ -52,9 +52,9 @@ class MinimalPublisher(Node):
         #         cmd_vel.linear.x = -0.5
         #         cmd_vel.angular.z = 0.0
         elif self.pos[0] <= -0.01 :
-                self.angular = self.ka*(self.pos[0] - self.init_pos)
+                self.angular = 0.5
         elif self.pos[0] >= 0.01:
-                self.angular = self.ka*(self.pos[0] - self.init_pos)
+                self.angular = -0.5
         else:
             self.velocity  = 0.0
             self.angular = 0.0
@@ -63,10 +63,15 @@ class MinimalPublisher(Node):
         self.publisher.publish(cmd_vel)
 
     def listener_callback(self, msg:LaserScan):
-        distance = min(msg.ranges)
+        distance = msg.range_min
         self.get_logger().info("distance:%s"% distance)
         if distance < self.min_distance:
             self.is_obstacle_close = True
+            cmd_vel = Twist()
+            cmd_vel.linear.x = 0.0
+            cmd_vel.angular.z = 0.0
+            self.publisher.publish(cmd_vel)
+
             self.get_logger().info("Close to the wall")
         else:
             self.is_obstacle_close = False
