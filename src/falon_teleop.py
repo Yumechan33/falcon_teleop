@@ -49,17 +49,20 @@ class MinimalPublisher(Node):
         cmd_vel = Twist()
 
         if self.pos[2] >= 0.11:
-                self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
-                if self.velocity  >= 0.22:
-                      self.velocity  = 0.22
+            self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
+            if self.velocity  >= 0.22:
+                self.velocity  = 0.22
         elif self.pos[2] <= 0.13:
-             self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
-             if self.velocity  <= -0.22:
-                      self.velocity  = -0.22
+            self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
+            if self.velocity  <= -0.22:
+                self.velocity  = -0.22
         elif self.pos[0] <= -0.01 :
-                self.angular = 0.3
+            self.angular = 0.3
         elif self.pos[0] >= 0.01:
-                self.angular = -0.3
+            self.angular = -0.3
+        elif self.pos[1] <= -0.03:
+            self.velocity  = 0.0
+            self.angular = 0.0
         else:
             self.velocity  = 0.0
             self.angular = 0.0
@@ -71,7 +74,7 @@ class MinimalPublisher(Node):
         distance = msg.ranges[0]
         self.get_logger().info("distance:%s"% distance)
         force = FalconForces()
-        if (distance < self.min_distance) or (distance != 0.0):
+        if ((distance!=0.0) < self.min_distance):
             self.force = self.kf * (distance - self.min_distance)
             force.z = self.force
             self.pub_force.publish(force)
