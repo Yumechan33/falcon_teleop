@@ -30,13 +30,13 @@ class MinimalPublisher(Node):
             10)
         
         self.pos = [0.0,0.0,0.0]
-        self.min_distance= 0.20
+        self.min_distance= 0.30
         self.m_stiffness = 1000
         self.velocity = 0.0
         self.angular = 0.0
         self.kv = -5.0
         self.ka = 9.09
-        self.kf = 37.5
+        self.kf = -43.3
         self.init_pos_f = 0.13
         self.init_pos_b = 0.11
         self.force = [0.0,0.0,0.0]
@@ -50,19 +50,18 @@ class MinimalPublisher(Node):
 
         if self.pos[2] >= 0.11:
             self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
-            if self.velocity  >= 0.22:
-                self.velocity  = 0.22
         elif self.pos[2] <= 0.13:
             self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
-            if self.velocity  <= -0.22:
-                self.velocity  = -0.22
-        elif self.pos[0] <= -0.01 :
+        elif self.pos[0] <= -0.03 :
             self.angular = 0.3
-        elif self.pos[0] >= 0.01:
+            self.get_logger().info("left")
+        elif self.pos[0] >= 0.03:
             self.angular = -0.3
+            self.get_logger().info("right")
         elif self.pos[1] <= -0.03:
             self.velocity  = 0.0
             self.angular = 0.0
+            self.get_logger().info("break")
         else:
             self.velocity  = 0.0
             self.angular = 0.0
