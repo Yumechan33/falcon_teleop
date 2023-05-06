@@ -48,22 +48,22 @@ class MinimalPublisher(Node):
         self.pos[2] = msg.z
         cmd_vel = Twist()
 
-        if self.pos[2] >= 0.10:
-            self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
-            self.get_logger().info("forward")
-        elif self.pos[2] <= 0.13:
-            self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
-            self.get_logger().info("backward")
+        if self.pos[1] <= -0.05:
+            self.velocity  = 0.0
+            self.angular = 0.0
+            self.get_logger().info("break")
         elif self.pos[0] <= -0.03 :
             self.angular = 0.3
             self.get_logger().info("left")
         elif self.pos[0] >= 0.03:
             self.angular = -0.3
             self.get_logger().info("right")
-        elif self.pos[1] <= -0.03:
-            self.velocity  = 0.0
-            self.angular = 0.0
-            self.get_logger().info("break")
+        elif self.pos[2] >= 0.10:
+            self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
+            self.get_logger().info("forward")
+        elif self.pos[2] <= 0.13:
+            self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
+            self.get_logger().info("backward")
         else:
             self.velocity  = 0.0
             self.angular = 0.0
