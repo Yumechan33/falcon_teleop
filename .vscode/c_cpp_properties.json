@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/ayumayume/ROS2_Y3_2/mobile_robot_inclass/install/falcon_interfaces/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/turtlebot3_fake_node/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/turtlebot3_msgs/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/turtlebot3_gazebo/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/multirobot_map_merge/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/explore_lite/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/dynamixel_sdk_custom_interfaces/include/**",
+        "/home/ayumayume/turtlebot3_ws/install/dynamixel_sdk/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/turtlebot3_fake_node/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/turtlebot3_msgs/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/turtlebot3_gazebo/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/falcon_interfaces/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/dynamixel_sdk_custom_interfaces/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/install/dynamixel_sdk/include/**",
+        "/home/ayumayume/ROS2_Directory/lab2_ws/install/openmanip_kinematics_interfaces/include/**",
+        "/home/ayumayume/ROS2_Directory/lab1_ws/install/lab1_interfaces/include/**",
+        "/home/ayumayume/ROS2_Directory/pun_ws/install/my_first_package/include/**",
+        "/home/ayumayume/MBSE/for_seding_v1/install/xicro_interfaces/include/**",
+        "/opt/ros/foxy/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/src/falcon_turtlebot/include/**",
+        "/home/ayumayume/open_topic/falcon_ros2/src/libnifalcon/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
