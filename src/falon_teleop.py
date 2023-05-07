@@ -35,10 +35,11 @@ class MinimalPublisher(Node):
         self.velocity = 0.0
         self.angular = 0.0
         self.kv = -5.0
-        self.ka = 9.09
+        self.ka = 50
         self.kf = -43.3
         self.init_pos_f = 0.13
         self.init_pos_b = 0.11
+        self.init_pos_l = 0.03
         self.force = [0.0,0.0,0.0]
         self.is_obstacle_close = False
 
@@ -53,15 +54,19 @@ class MinimalPublisher(Node):
             self.angular = 0.0
             self.get_logger().info("break")
         elif self.pos[0] <= -0.03 :
-            self.angular = 0.3
+            self.angular  = self.ka*(self.pos[0] - self.init_pos_l)
+            self.velocity  = 0.0
             self.get_logger().info("left")
         elif self.pos[0] >= 0.03:
-            self.angular = -0.3
+            self.angular  = self.ka*(self.pos[0] + self.init_pos_l)
+            self.velocity  = 0.0
             self.get_logger().info("right")
         elif self.pos[2] >= 0.10:
+            self.angular = 0.0
             self.velocity  = self.kv*(self.pos[2] - self.init_pos_f)
             self.get_logger().info("forward")
         elif self.pos[2] <= 0.13:
+            self.angular = 0.0
             self.velocity  = self.kv*(self.pos[2] - self.init_pos_b)
             self.get_logger().info("backward")
         else:
@@ -75,7 +80,7 @@ class MinimalPublisher(Node):
         distance = msg.ranges[0]
         self.get_logger().info("distance:%s"% distance)
         force = FalconForces()
-        if (distance < self.min_distance):
+        if ((distance < self.min_distance)and(distance > 0.1)):
             self.force = self.kf * (distance - self.min_distance)
             force.z = self.force
             self.pub_force.publish(force)
