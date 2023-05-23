@@ -10,6 +10,7 @@ from falcon_interfaces.msg import FalconPos,FalconForces
 
 from rclpy.qos import QoSProfile
 from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import q
 
 class MinimalPublisher(Node):
 
@@ -30,13 +31,14 @@ class MinimalPublisher(Node):
             10)
         
         self.pos = [0.0,0.0,0.0]
+        self.i = 0
         self.min_distance= 0.30
-        self.m_stiffness = 1000
+        self.m_stiffness = -672
         self.velocity = 0.0
         self.angular = 0.0
-        self.kv = -5.0
-        self.ka = 50
-        self.kf = -43.3
+        self.kv = -10.0
+        self.ka = 50.0
+        self.kf = 200.0
         self.init_pos_f = 0.13
         self.init_pos_b = 0.11
         self.init_pos_l = 0.03
@@ -54,11 +56,11 @@ class MinimalPublisher(Node):
             self.angular = 0.0
             self.get_logger().info("break")
         elif self.pos[0] <= -0.03 :
-            self.angular  = self.ka*(self.pos[0] - self.init_pos_l)
+            self.angular  = 0.5
             self.velocity  = 0.0
             self.get_logger().info("left")
         elif self.pos[0] >= 0.03:
-            self.angular  = self.ka*(self.pos[0] + self.init_pos_l)
+            self.angular  = -0.5
             self.velocity  = 0.0
             self.get_logger().info("right")
         elif self.pos[2] >= 0.10:
@@ -80,17 +82,32 @@ class MinimalPublisher(Node):
         distance = msg.ranges[0]
         self.get_logger().info("distance:%s"% distance)
         force = FalconForces()
-        if ((distance < self.min_distance)and(distance > 0.1)):
-            self.force = self.kf * (distance - self.min_distance)
-            force.z = self.force
-            self.pub_force.publish(force)
-            self.get_logger().info("Close to the wall")
+        if ((distance < self.min_distance)and(distance > 0.001)):
+            receive_time = self.get_clock().now()
+            duration = self.get_clock().now() - receive_time
+            milliseconds = duration.nanoseconds / 1e6
+            self.get_logger().info('Received message in {:.2f} milliseconds'.format(milliseconds))
+            #self.force = self.kf * (distance - self.min_distance)
+            #self.force = -self.m_stiffness * (self.pos[2] - 0.13)
+            if (self.pos[2] <= 0.13):
+                #(distance - self.min_distance) * 0.25 and m 800
+                self.Fs = self.kf *(self.min_distance - distance)
+                self.Fd = self.m_stiffness * (self.pos[2] - 0.13)
+                self.force = self.Fs + self.Fd
+                self.get_logger().info("Force: %s "% self.force)
+                force.z = self.force
+                self.pub_force.publish(force)
+                # self.get_logger().info("Close to the wall")
+            #  else:
+            #     self.force += (distance - self.min_distance)*10
+            #     self.get_logger().info("Force: %s "% self.force)
+            #     force.z = self.force
+            #     self.pub_force.publish(force)
         else:
             self.is_obstacle_close = False
             force.z = 0.0
             self.pub_force.publish(force)
-            self.get_logger().info("Not Close Obstacle, Let move")
-
+            # self.get_logger().info("Not Close Obstacle, Let move")
 def main(args=None):
     rclpy.init(args=args)
 
